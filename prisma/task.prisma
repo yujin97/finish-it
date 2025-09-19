@@ -1,0 +1,26 @@
+model Task {
+    id          Int       @id @default(autoincrement())
+    title       String
+    creator_id  String
+    description String
+    status      Status    @relation(fields: [statusId], references: [id])
+    statusId    Int       @map("status_id")
+    sortOrder   Decimal   @map("sort_order") @db.Decimal(15, 6)
+    createdAt   DateTime  @default(now()) @map("created_at")
+    updatedAt   DateTime  @default(now()) @map("updated_at")
+    deletedAt   DateTime? @map("deleted_at")
+
+    @@map("tasks")
+}
+
+model Status {
+    id         Int       @id @default(autoincrement())
+    name       String
+    sort_order Int       @unique
+    Task       Task[]
+    createdAt  DateTime  @default(now())
+    updatedAt  DateTime  @default(now())
+    deletedAt  DateTime?
+
+    @@map("statuses")
+}
