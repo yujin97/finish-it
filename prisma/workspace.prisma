@@ -1,7 +1,7 @@
 model Workspace {
     id            Int             @id @default(autoincrement())
     name          String
-    creator_id    String
+    creatorId     String          @map("creator_id")
     UserWorkspace UserWorkspace[]
     createdAt     DateTime        @default(now()) @map("created_at")
     updatedAt     DateTime        @default(now()) @map("updated_at")
@@ -12,7 +12,7 @@ model Workspace {
 
 model UserWorkspace {
     id          Int       @id @default(autoincrement())
-    user_id     String
+    userId      String    @map("user_id")
     workspace   Workspace @relation(fields: [workspaceId], references: [id])
     workspaceId Int       @map("workspace_id")
     createdAt   DateTime  @default(now()) @map("created_at")
