@@ -2,7 +2,8 @@ model Workspace {
     id            Int             @id @default(autoincrement())
     name          String
     creatorId     String          @map("creator_id")
-    UserWorkspace UserWorkspace[]
+    userWorkspace UserWorkspace[]
+    tasks         Task[]
     createdAt     DateTime        @default(now()) @map("created_at")
     updatedAt     DateTime        @default(now()) @map("updated_at")
     deletedAt     DateTime?       @map("deleted_at")

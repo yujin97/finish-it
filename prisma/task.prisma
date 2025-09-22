@@ -5,6 +5,8 @@ model Task {
     description String
     status      Status    @relation(fields: [statusId], references: [id])
     statusId    Int       @map("status_id")
+    workspace   Workspace @relation(fields: [workspaceId], references: [id])
+    workspaceId Int       @map("workspace_id")
     sortOrder   Decimal   @map("sort_order") @db.Decimal(15, 6)
     createdAt   DateTime  @default(now()) @map("created_at")
     updatedAt   DateTime  @default(now()) @map("updated_at")
