@@ -9,7 +9,7 @@ model Task {
     workspaceId Int       @map("workspace_id")
     sortOrder   Decimal   @map("sort_order") @db.Decimal(15, 6)
     createdAt   DateTime  @default(now()) @map("created_at")
-    updatedAt   DateTime  @default(now()) @map("updated_at")
+    updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at")
     deletedAt   DateTime? @map("deleted_at")
 
     @@map("tasks")
@@ -21,7 +21,7 @@ model Status {
     sortOrder Int       @unique @map("sort_order")
     Task      Task[]
     createdAt DateTime  @default(now())
-    updatedAt DateTime  @default(now())
+    updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
     deletedAt DateTime?
 
     @@map("statuses")

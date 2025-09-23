@@ -5,7 +5,7 @@ model Workspace {
     userWorkspace UserWorkspace[]
     tasks         Task[]
     createdAt     DateTime        @default(now()) @map("created_at")
-    updatedAt     DateTime        @default(now()) @map("updated_at")
+    updatedAt     DateTime        @default(now()) @updatedAt @map("updated_at")
     deletedAt     DateTime?       @map("deleted_at")
 
     @@map("workspaces")
@@ -17,7 +17,7 @@ model UserWorkspace {
     workspace   Workspace @relation(fields: [workspaceId], references: [id])
     workspaceId Int       @map("workspace_id")
     createdAt   DateTime  @default(now()) @map("created_at")
-    updatedAt   DateTime  @default(now()) @map("updated_at")
+    updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at")
     deletedAt   DateTime? @map("deleted_at")
 
     @@map("users_workspaces")
