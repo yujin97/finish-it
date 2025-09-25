@@ -1,11 +1,29 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { TaskActionButton } from "./TaskActionButton";
 
 type Props = {
   title: string;
   description: string;
+  nextAction?: {
+    label: string;
+    taskId: number;
+    nextStatusId: number;
+    workspaceId: number;
+    onNextActionClick: (
+      taskId: number,
+      statusId: number,
+      workspaceId: number,
+    ) => Promise<void>;
+  };
 };
 
-export function TaskCard({ title, description }: Props) {
+export function TaskCard({ title, description, nextAction }: Props) {
   return (
     <Card className="hover:shadow-md transition-shadow duration-200">
       <CardHeader className="pb-2">
@@ -16,6 +34,17 @@ export function TaskCard({ title, description }: Props) {
           {description}
         </div>
       </CardContent>
+      {!!nextAction && (
+        <CardFooter>
+          <TaskActionButton
+            label={nextAction.label}
+            taskId={nextAction.taskId}
+            workspaceId={nextAction.workspaceId}
+            nextStatusId={nextAction.nextStatusId}
+            action={nextAction.onNextActionClick}
+          />
+        </CardFooter>
+      )}
     </Card>
   );
 }
