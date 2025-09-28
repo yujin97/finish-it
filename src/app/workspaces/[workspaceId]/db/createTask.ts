@@ -2,6 +2,7 @@
 import { prisma } from "@/utils/prismaClient";
 import { auth } from "@clerk/nextjs/server";
 import { taskSchema, CreateTaskFormData } from "../schemas/createTaskFormData";
+import { revalidatePath } from "next/cache";
 
 type Parameter = {
   data: CreateTaskFormData;
@@ -49,5 +50,10 @@ export async function createTask({ data, workspaceId }: Parameter) {
     },
   });
 
-  return newTask ? newTask.id : null;
+  if (!!newTask) {
+    revalidatePath(`/workspaces/${workspaceId}`);
+    return newTask.id;
+  }
+
+  return null;
 }
