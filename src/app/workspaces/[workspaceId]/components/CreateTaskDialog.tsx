@@ -1,5 +1,5 @@
 "use client";
-
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -21,17 +21,21 @@ type Props = {
 };
 
 export function CreateTaskDialog({ workspaceId }: Props) {
+  const [open, setOpen] = useState(false);
+
   const { register, handleSubmit } = useForm({
     resolver: zodResolver(taskSchema),
   });
 
   const onSubmit = async (data: CreateTaskFormData) => {
-    console.log("submitting...");
-    createTask({ data, workspaceId });
+    const newTaskId = await createTask({ data, workspaceId });
+    if (!!newTaskId) {
+      setOpen(false);
+    }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="max-w-fit">Create new task</Button>
       </DialogTrigger>
