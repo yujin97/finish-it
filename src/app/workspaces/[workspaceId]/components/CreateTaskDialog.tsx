@@ -30,10 +30,6 @@ export function CreateTaskDialog({ workspaceId }: Props) {
     createTask({ data, workspaceId });
   };
 
-  const onError = async (e: any) => {
-    console.log("error!", e);
-  };
-
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -45,7 +41,7 @@ export function CreateTaskDialog({ workspaceId }: Props) {
         </DialogHeader>
         <form
           className="p-6 flex flex-col gap-4"
-          onSubmit={handleSubmit(onSubmit, onError)}
+          onSubmit={handleSubmit(onSubmit)}
         >
           <div className="flex flex-1 w-full max-w-sm gap-3 flex-col items-start">
             <label htmlFor="name">Name:</label>

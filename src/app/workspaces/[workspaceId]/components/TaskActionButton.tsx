@@ -25,7 +25,7 @@ export function TaskActionButton({
     .bind(null, taskId)
     .bind(null, nextStatusId)
     .bind(null, workspaceId);
-  const [_state, formAction, isPending] = useActionState(actionWithIds, null);
+  const [, formAction, isPending] = useActionState(actionWithIds, null);
 
   return (
     <form action={formAction}>
