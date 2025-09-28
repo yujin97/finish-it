@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "pnpm prisma:migrate && pnpm prisma:seed && pnpm prisma:generate && next build",
+    "build": "pnpm prisma:migrate && pnpm prisma:generate && pnpm prisma:seed && next build",
     "start": "next start",
     "lint": "next lint",
     "shadcn:add": "pnpm dlx shadcn@latest add",
