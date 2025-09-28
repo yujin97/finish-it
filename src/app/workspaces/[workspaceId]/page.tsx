@@ -4,6 +4,7 @@ import { prisma } from "@/utils/prismaClient";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { TaskCard } from "./components/TaskCard";
 import { updateTaskStatus } from "./actions/updateTaskStatus";
+import { CreateTaskDialog } from "./components/CreateTaskDialog";
 
 type PageParams = {
   workspaceId: string;
@@ -64,6 +65,7 @@ export default async function Page({
       <div className="text-2xl font-bold text-center sm:text-left">
         {workspace.workspace.name}
       </div>
+      <CreateTaskDialog workspaceId={workspaceIdNumber} />
       <div className="flex flex-1 flex-col sm:flex-row gap-4 lg:gap-6">
         {tasksByStatus.map(({ id: statusId, name, tasks }, statusIdx) => (
           <Card key={statusId} className="w-full sm:flex-1">
