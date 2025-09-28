@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "pnpm prisma:generate && next build && prisma migrate deploy",
+    "build": "pnpm prisma:migrate && pnpm prisma:seed && pnpm prisma:generate && next build",
     "start": "next start",
     "lint": "next lint",
     "shadcn:add": "pnpm dlx shadcn@latest add",
-    "prisma:generate": "prisma generate && prisma generate --sql"
+    "prisma:generate": "prisma generate && prisma generate --sql",
+    "prisma:migrate": "prisma migrate deploy",
+    "prisma:seed": "prisma db seed"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.32.0",
