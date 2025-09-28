@@ -23,9 +23,11 @@ type Props = {
 export function CreateTaskDialog({ workspaceId }: Props) {
   const [open, setOpen] = useState(false);
 
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit, formState } = useForm({
     resolver: zodResolver(taskSchema),
   });
+
+  const { isSubmitting } = formState;
 
   const onSubmit = async (data: CreateTaskFormData) => {
     const newTaskId = await createTask({ data, workspaceId });
@@ -64,7 +66,9 @@ export function CreateTaskDialog({ workspaceId }: Props) {
             />
           </div>
           <DialogFooter>
-            <Button type="submit">Create</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              Create
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
