@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { TaskCard } from "./TaskCard";
 import { updateTaskStatus } from "../actions/updateTaskStatus";
 import { CreateTaskDialog } from "../components/CreateTaskDialog";
+import { TaskDetailsDialog } from "../components/TaskDetailsDialog";
 
 type Props = {
   userId: string;
@@ -34,10 +35,6 @@ export async function WorkspaceView({ userId, workspaceId, taskId }: Props) {
     orderBy: [{ sortOrder: "desc" }, { updatedAt: "desc" }],
   });
 
-  if (!!taskId && !tasks.some(({ id }) => id === taskId)) {
-    return <div>task does not exist</div>;
-  }
-
   const tasksByStatus = statuses.map(({ id, name }) => {
     const tasksOfStatus: typeof tasks = [];
     tasks.forEach((task) => {
@@ -52,6 +49,17 @@ export async function WorkspaceView({ userId, workspaceId, taskId }: Props) {
       tasks: tasksOfStatus,
     };
   });
+
+  if (!!taskId && !tasks.some(({ id }) => id === taskId)) {
+    return <div>task does not exist</div>;
+  }
+
+  const selectedTask = tasks.find(({ id }) => id === taskId);
+
+  const clientSelectedTask = selectedTask
+    ? // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      (({ sortOrder, ...rest }) => rest)(selectedTask)
+    : undefined;
 
   return (
     <div className="flex flex-1 flex-col px-4 sm:px-6 lg:px-12 gap-6 lg:gap-8">
@@ -83,6 +91,8 @@ export async function WorkspaceView({ userId, workspaceId, taskId }: Props) {
                 return (
                   <TaskCard
                     key={taskId}
+                    taskId={taskId}
+                    workspaceId={workspaceId}
                     title={title}
                     description={description}
                     nextAction={nextAction}
@@ -93,6 +103,10 @@ export async function WorkspaceView({ userId, workspaceId, taskId }: Props) {
           </Card>
         ))}
       </div>
+      <TaskDetailsDialog
+        task={clientSelectedTask}
+        viewPath={`/workspaces/${workspaceId}`}
+      />
     </div>
   );
 }
