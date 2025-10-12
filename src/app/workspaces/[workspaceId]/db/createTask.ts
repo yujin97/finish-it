@@ -4,12 +4,12 @@ import { auth } from "@clerk/nextjs/server";
 import { taskSchema, CreateTaskFormData } from "../schemas/createTaskFormData";
 import { revalidatePath } from "next/cache";
 
-type Parameter = {
+type Parameters = {
   data: CreateTaskFormData;
   workspaceId: number;
 };
 
-export async function createTask({ data, workspaceId }: Parameter) {
+export async function createTask({ data, workspaceId }: Parameters) {
   const { isAuthenticated, userId } = await auth();
 
   if (!isAuthenticated || !userId) throw new Error("Unauthorized User");
@@ -51,7 +51,7 @@ export async function createTask({ data, workspaceId }: Parameter) {
   });
 
   if (!!newTask) {
-    revalidatePath(`/workspaces/${workspaceId}`);
+    revalidatePath(`/workspaces/${workspaceId}`, "layout");
     return newTask.id;
   }
 
