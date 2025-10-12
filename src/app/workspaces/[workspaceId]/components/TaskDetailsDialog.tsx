@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { DeleteTaskButton } from "../components/DeleteTaskButton";
 
 import { Task } from "@prisma-generated/client";
 
@@ -55,9 +56,7 @@ export function TaskDetailsDialog({ task, viewPath }: Props) {
           />
         </div>
         <DialogFooter>
-          <Button type="button" variant="destructive">
-            Delete
-          </Button>
+          <DeleteTaskButton workspaceId={task.workspaceId} taskId={task.id} />
           <Button type="submit">Update</Button>
         </DialogFooter>
       </DialogContent>

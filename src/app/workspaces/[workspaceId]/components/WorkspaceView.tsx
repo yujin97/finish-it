@@ -28,7 +28,7 @@ export async function WorkspaceView({ userId, workspaceId, taskId }: Props) {
   const statuses = await prisma.status.findMany();
 
   const tasks = await prisma.task.findMany({
-    where: { workspaceId },
+    where: { workspaceId, deletedAt: null },
     include: {
       status: true,
     },
