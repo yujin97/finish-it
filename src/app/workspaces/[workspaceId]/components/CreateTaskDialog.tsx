@@ -23,7 +23,7 @@ type Props = {
 export function CreateTaskDialog({ workspaceId }: Props) {
   const [open, setOpen] = useState(false);
 
-  const { register, handleSubmit, formState } = useForm({
+  const { register, handleSubmit, reset, formState } = useForm({
     resolver: zodResolver(taskSchema),
   });
 
@@ -33,6 +33,7 @@ export function CreateTaskDialog({ workspaceId }: Props) {
     const newTaskId = await createTask({ data, workspaceId });
     if (!!newTaskId) {
       setOpen(false);
+      reset();
     }
   };
 
