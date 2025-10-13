@@ -1,8 +1,6 @@
 import { prisma } from "@/utils/prismaClient";
 
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { TaskCard } from "./TaskCard";
-import { updateTaskStatus } from "../actions/updateTaskStatus";
+import { TaskList } from "./TaskList";
 import { CreateTaskDialog } from "../components/CreateTaskDialog";
 import { TaskDetailsDialog } from "../components/TaskDetailsDialog";
 
@@ -69,28 +67,16 @@ export async function WorkspaceView({ userId, workspaceId, taskId }: Props) {
       <CreateTaskDialog workspaceId={workspaceId} />
       <div className="flex flex-1 flex-col sm:flex-row gap-4 lg:gap-6">
         {tasksByStatus.map(({ id: statusId, name, tasks }, statusIdx) => (
-          <Card key={statusId} className="w-full sm:flex-1">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg">{name}</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-2 max-h-96 lg:max-h-none overflow-y-auto lg:overflow-visible">
-              {tasks.map(({ id: taskId, title, description }) => {
-                const nextStatusId = statuses[statusIdx + 1]?.id;
-
-                return (
-                  <TaskCard
-                    key={taskId}
-                    taskId={taskId}
-                    workspaceId={workspaceId}
-                    statusId={statusId}
-                    title={title}
-                    description={description}
-                    nextStatusId={nextStatusId}
-                  />
-                );
-              })}
-            </CardContent>
-          </Card>
+          <TaskList
+            key={statusId}
+            statusId={statusId}
+            statusName={name}
+            tasks={tasks.map((task) => ({
+              ...task,
+              sortOrder: task.sortOrder.toString(),
+            }))}
+            nextStatusId={statuses[statusIdx + 1]?.id}
+          />
         ))}
       </div>
       <TaskDetailsDialog
