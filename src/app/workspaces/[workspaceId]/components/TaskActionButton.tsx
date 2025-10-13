@@ -1,17 +1,14 @@
 "use client";
 import { useActionState } from "react";
+
 import { Button } from "@/components/ui/button";
+import { updateTaskStatus } from "../actions/updateTaskStatus";
 
 type Props = {
   label: string;
   taskId: number;
   nextStatusId: number;
   workspaceId: number;
-  action: (
-    userId: number,
-    statusId: number,
-    workspaceId: number,
-  ) => Promise<void>;
 };
 
 export function TaskActionButton({
@@ -19,9 +16,8 @@ export function TaskActionButton({
   taskId,
   nextStatusId,
   workspaceId,
-  action,
 }: Props) {
-  const actionWithIds = action
+  const actionWithIds = updateTaskStatus
     .bind(null, taskId)
     .bind(null, nextStatusId)
     .bind(null, workspaceId);

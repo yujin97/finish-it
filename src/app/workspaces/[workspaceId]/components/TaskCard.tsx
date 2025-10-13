@@ -11,19 +11,10 @@ import { TaskActionButton } from "./TaskActionButton";
 type Props = {
   workspaceId: number;
   taskId: number;
+  statusId: number;
   title: string;
   description: string;
-  nextAction?: {
-    label: string;
-    taskId: number;
-    nextStatusId: number;
-    workspaceId: number;
-    onNextActionClick: (
-      taskId: number,
-      statusId: number,
-      workspaceId: number,
-    ) => Promise<void>;
-  };
+  nextStatusId?: number;
 };
 
 export function TaskCard({
@@ -31,7 +22,7 @@ export function TaskCard({
   taskId,
   title,
   description,
-  nextAction,
+  nextStatusId,
 }: Props) {
   return (
     <Link href={`/workspaces/${workspaceId}/tasks/${taskId}`}>
@@ -46,14 +37,13 @@ export function TaskCard({
             {description}
           </div>
         </CardContent>
-        {!!nextAction && (
+        {!!nextStatusId && (
           <CardFooter>
             <TaskActionButton
-              label={nextAction.label}
-              taskId={nextAction.taskId}
-              workspaceId={nextAction.workspaceId}
-              nextStatusId={nextAction.nextStatusId}
-              action={nextAction.onNextActionClick}
+              label="NEXT"
+              taskId={taskId}
+              workspaceId={workspaceId}
+              nextStatusId={nextStatusId}
             />
           </CardFooter>
         )}

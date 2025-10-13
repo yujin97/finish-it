@@ -75,27 +75,17 @@ export async function WorkspaceView({ userId, workspaceId, taskId }: Props) {
             </CardHeader>
             <CardContent className="flex flex-col gap-2 max-h-96 lg:max-h-none overflow-y-auto lg:overflow-visible">
               {tasks.map(({ id: taskId, title, description }) => {
-                const nextStatusId =
-                  statusIdx < statuses.length - 1
-                    ? statuses[statusIdx + 1].id
-                    : null;
-                const nextAction = nextStatusId
-                  ? {
-                      label: "NEXT",
-                      taskId,
-                      nextStatusId,
-                      workspaceId: workspaceId,
-                      onNextActionClick: updateTaskStatus,
-                    }
-                  : undefined;
+                const nextStatusId = statuses[statusIdx + 1]?.id;
+
                 return (
                   <TaskCard
                     key={taskId}
                     taskId={taskId}
                     workspaceId={workspaceId}
+                    statusId={statusId}
                     title={title}
                     description={description}
-                    nextAction={nextAction}
+                    nextStatusId={nextStatusId}
                   />
                 );
               })}
