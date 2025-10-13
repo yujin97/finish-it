@@ -29,7 +29,14 @@ export function TaskActionButton({
 
   return (
     <form action={formAction}>
-      <Button disabled={isPending}>{label}</Button>
+      <Button
+        disabled={isPending}
+        onClick={(event) => {
+          event.stopPropagation();
+        }}
+      >
+        {label}
+      </Button>
     </form>
   );
 }
