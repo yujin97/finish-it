@@ -1,5 +1,6 @@
 "use client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { useDroppable } from "@dnd-kit/core";
 import { Task } from "@prisma-generated/client";
 
 import { TaskCard } from "./TaskCard";
@@ -16,8 +17,15 @@ type Props = {
 };
 
 export function TaskList({ statusId, statusName, tasks, nextStatusId }: Props) {
+  const { isOver, setNodeRef } = useDroppable({ id: `taskList${statusId}` });
+  const isOverStyle = isOver ? "bg-greeen-200" : "";
+
   return (
-    <Card key={statusId} className="w-full sm:flex-1">
+    <Card
+      key={statusId}
+      ref={setNodeRef}
+      className={`w-full sm:flex-1 ${isOverStyle}`}
+    >
       <CardHeader className="pb-4">
         <CardTitle className="text-lg">{statusName}</CardTitle>
       </CardHeader>
