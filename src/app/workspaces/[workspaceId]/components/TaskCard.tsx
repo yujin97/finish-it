@@ -60,7 +60,7 @@ export function TaskCard({
       }}
     >
       <Card
-        className="hover:shadow-md transition-shadow duration-200"
+        className={`hover:shadow-md transition-shadow duration-200 ${isDragging ? "cursor-move" : "cursor-pointer"}`}
         style={{
           ...transformStyle,
         }}
