@@ -23,13 +23,13 @@ type Props = {
 export function TaskLists({ tasksByStatusList, statuses }: Props) {
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
-      delay: 100,
+      delay: 150,
       tolerance: 0,
     },
   });
   const touchSensor = useSensor(TouchSensor, {
     activationConstraint: {
-      delay: 100,
+      delay: 150,
       tolerance: 0,
     },
   });
