@@ -17,7 +17,7 @@ import { Task } from "@prisma-generated/client";
 
 type Props = {
   task?: Omit<Task, "sortOrder">;
-  viewPath: string;
+  viewPath?: string;
 };
 
 export function TaskDetailsDialog({ task, viewPath }: Props) {
@@ -31,7 +31,11 @@ export function TaskDetailsDialog({ task, viewPath }: Props) {
       open={open}
       onOpenChange={(open) => {
         if (!open) {
-          router.push(viewPath);
+          if (viewPath) {
+            router.push(viewPath);
+          } else {
+            router.back();
+          }
         }
       }}
     >
