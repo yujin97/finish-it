@@ -14,7 +14,9 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.32.0",
-    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/abstract": "^0.1.21",
+    "@dnd-kit/helpers": "^0.1.21",
+    "@dnd-kit/react": "^0.1.21",
     "@hookform/resolvers": "^5.2.2",
     "@prisma/client": "6.16.1",
     "@radix-ui/react-dialog": "^1.1.15",

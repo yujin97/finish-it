@@ -7,7 +7,7 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { useDraggable } from "@dnd-kit/core";
+import { useSortable } from "@dnd-kit/react/sortable";
 import { useEffect, useState } from "react";
 
 import { TaskActionButton } from "./TaskActionButton";
@@ -15,25 +15,31 @@ import { TaskActionButton } from "./TaskActionButton";
 type Props = {
   workspaceId: number;
   taskId: number;
-  statusId: number;
+  statusId: string;
   title: string;
   description: string;
   nextStatusId?: number;
+  index: number;
 };
 
 export function TaskCard({
   workspaceId,
   taskId,
+  statusId,
   title,
   description,
   nextStatusId,
+  index,
 }: Props) {
   const [shouldPreventClick, setShouldPreventClick] = useState<boolean>(false);
 
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({
-      id: `task${taskId}`,
-    });
+  const { ref, isDragging } = useSortable({
+    id: `task${taskId}`,
+    index,
+    type: "item",
+    accept: "item",
+    group: statusId,
+  });
 
   useEffect(() => {
     if (isDragging) {
@@ -44,14 +50,10 @@ export function TaskCard({
     }
   }, [isDragging, shouldPreventClick]);
 
-  const transformStyle = transform
-    ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-      }
-    : {};
-
   return (
     <Link
+      ref={ref}
+      data-dragging={isDragging}
       href={`/workspaces/${workspaceId}/tasks/${taskId}`}
       onClickCapture={(event) => {
         if (shouldPreventClick) {
@@ -59,15 +61,7 @@ export function TaskCard({
         }
       }}
     >
-      <Card
-        className={`hover:shadow-md transition-shadow duration-200 ${isDragging ? "cursor-move" : "cursor-pointer"}`}
-        style={{
-          ...transformStyle,
-        }}
-        ref={setNodeRef}
-        {...listeners}
-        {...attributes}
-      >
+      <Card className={`hover:shadow-md transition-shadow duration-200`}>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium truncate">
             {title}
