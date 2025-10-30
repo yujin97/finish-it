@@ -7,7 +7,8 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { useSortable } from "@dnd-kit/react/sortable";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { useEffect, useState } from "react";
 
 import { TaskActionButton } from "./TaskActionButton";
@@ -15,30 +16,31 @@ import { TaskActionButton } from "./TaskActionButton";
 type Props = {
   workspaceId: number;
   taskId: number;
-  statusId: string;
+  sortId: string;
   title: string;
   description: string;
   nextStatusId?: number;
-  index: number;
 };
 
 export function TaskCard({
   workspaceId,
   taskId,
-  statusId,
+  sortId,
   title,
   description,
   nextStatusId,
-  index,
 }: Props) {
   const [shouldPreventClick, setShouldPreventClick] = useState<boolean>(false);
 
-  const { ref, isDragging } = useSortable({
-    id: `task${taskId}`,
-    index,
-    type: "item",
-    accept: "item",
-    group: statusId,
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: sortId,
   });
 
   useEffect(() => {
@@ -50,16 +52,24 @@ export function TaskCard({
     }
   }, [isDragging, shouldPreventClick]);
 
+  const dragStyles = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
   return (
     <Link
-      ref={ref}
-      data-dragging={isDragging}
       href={`/workspaces/${workspaceId}/tasks/${taskId}`}
       onClickCapture={(event) => {
         if (shouldPreventClick) {
           event.preventDefault();
         }
       }}
+      {...attributes}
+      {...listeners}
+      ref={setNodeRef}
+      style={dragStyles}
+      className={`${isDragging ? "cursor-grabbing" : "cursor-pointer"}`}
     >
       <Card className={`hover:shadow-md transition-shadow duration-200`}>
         <CardHeader className="pb-2">

@@ -1,8 +1,12 @@
 "use client";
 import { useState } from "react";
 import { Task, Status } from "@prisma-generated/client";
-import { DragDropProvider, PointerSensor } from "@dnd-kit/react";
-import { isSortable } from "@dnd-kit/react/sortable";
+import {
+  DndContext,
+  PointerSensor,
+  useSensor,
+  closestCorners,
+} from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/helpers";
 
 import { TaskList } from "./TaskList";
@@ -10,6 +14,10 @@ import { TaskList } from "./TaskList";
 type ClientTask = Omit<Task, "sortOrder"> & {
   sortOrder: string;
   status: Status;
+};
+
+type SortableTask = ClientTask & {
+  sortId: string;
 };
 
 type TasksByStatus = {
@@ -24,62 +32,154 @@ type Props = {
 };
 
 export function TaskLists({ tasksByStatusList, statuses }: Props) {
-  const pointerSensor = PointerSensor.configure({
-    activationConstraints: {
-      delay: { value: 150, tolerance: 0 },
+  const pointerSensor = useSensor(PointerSensor, {
+    activationConstraint: {
+      delay: 150,
+      tolerance: 0,
     },
   });
 
   const [sortableTasksByStatusList, setSortableTasksByStatusList] = useState(
-    tasksByStatusList.reduce<Record<string, ClientTask[]>>(
+    tasksByStatusList.reduce<Record<string, SortableTask[]>>(
       (result, { id, tasks }) => {
-        result[`taskList${id}`] = tasks;
+        const sortableTasks = tasks.map((task) => ({
+          ...task,
+          sortId: `$task${task.id}`,
+        }));
+        result[`taskList${id}`] = sortableTasks;
         return result;
       },
       {},
     ),
   );
 
+  function findContainer(id: string) {
+    if (id in sortableTasksByStatusList) {
+      return id;
+    }
+
+    let containerId: string | null = null;
+
+    for (const [parentId, tasks] of Object.entries(sortableTasksByStatusList)) {
+      if (tasks.some(({ sortId }) => sortId === id)) {
+        containerId = parentId;
+        break;
+      }
+    }
+
+    return containerId;
+  }
   return (
-    <DragDropProvider
+    <DndContext
+      id="taskLists"
       sensors={[pointerSensor]}
-      onDragEnd={(event) => {
-        const {
-          operation: { source },
-        } = event;
-        if (isSortable(source)) {
-          const {
-            sortable: { initialIndex, index, initialGroup, group },
-          } = source;
-          // must exist in this use case
-          if (!initialGroup || !group) {
-            return;
-          }
-          setSortableTasksByStatusList((tasksList) => {
-            const newTaskList = Object.entries(tasksList).reduce<
-              Record<string, ClientTask[]>
-            >((list, [status, tasks]) => {
-              list[status] = [...tasks];
-              return list;
-            }, {});
+      collisionDetection={closestCorners}
+      onDragOver={(event) => {
+        const { active, over } = event;
 
-            if (initialGroup === group) {
-              const newTasks = newTaskList[group];
-              newTaskList[group] = arrayMove(newTasks, initialIndex, index);
-              return newTaskList;
-            }
+        if (!over) return;
 
-            const newSourceTasks = newTaskList[initialGroup];
-            const newTargetTasks = newTaskList[group];
-            const [draggedTask] = newSourceTasks.splice(initialIndex, 1);
-            newTargetTasks.splice(index, 0, draggedTask);
-            newTaskList[initialGroup] = newSourceTasks;
-            newTaskList[group] = newTargetTasks;
-            return newTaskList;
-          });
-        } else {
+        const { id } = active;
+        const { id: overId } = over;
+
+        if (typeof id !== "string" || typeof overId !== "string") return;
+
+        // Find the containers
+        const activeContainer = findContainer(id);
+        const overContainer = findContainer(overId);
+
+        if (
+          !activeContainer ||
+          !overContainer ||
+          activeContainer === overContainer
+        ) {
           return;
         }
+
+        setSortableTasksByStatusList((prev) => {
+          const activeItems = prev[activeContainer];
+          const overItems = prev[overContainer];
+
+          // Find the indexes for the items
+          const activeIndex = activeItems.findIndex(
+            ({ sortId }) => sortId === id,
+          );
+          const overIndex = overItems.findIndex(
+            ({ sortId }) => sortId === overId,
+          );
+
+          let newIndex;
+          if (overId in prev) {
+            // We're at the root droppable of a container
+            newIndex = overItems.length + 1;
+          } else {
+            const isBelowLastItem =
+              (over &&
+                overIndex === overItems.length - 1 &&
+                active.rect.current?.translated?.top) ||
+              0 > over.rect.top + over.rect.height;
+
+            const modifier = isBelowLastItem ? 1 : 0;
+
+            newIndex =
+              overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
+          }
+
+          return {
+            ...prev,
+            [activeContainer]: [
+              ...prev[activeContainer].filter(
+                ({ sortId }) => sortId !== active.id,
+              ),
+            ],
+            [overContainer]: [
+              ...prev[overContainer].slice(0, newIndex),
+              sortableTasksByStatusList[activeContainer][activeIndex],
+              ...prev[overContainer].slice(
+                newIndex,
+                prev[overContainer].length,
+              ),
+            ],
+          };
+        });
+      }}
+      onDragEnd={(event) => {
+        const { active, over } = event;
+        const { id } = active;
+        if (!over) return;
+        const { id: overId } = over;
+        if (typeof id !== "string" || typeof overId !== "string") return;
+
+        const activeContainer = findContainer(id);
+        const overContainer = findContainer(overId);
+
+        if (
+          !activeContainer ||
+          !overContainer ||
+          activeContainer !== overContainer
+        ) {
+          return;
+        }
+
+        setSortableTasksByStatusList((prev) => {
+          const activeIndex = prev[activeContainer].findIndex(
+            ({ sortId }) => sortId === id,
+          );
+          const overIndex = prev[overContainer].findIndex(
+            ({ sortId }) => sortId === overId,
+          );
+          if (activeIndex !== overIndex) {
+            return {
+              ...prev,
+              [overContainer]: arrayMove(
+                prev[overContainer],
+                activeIndex,
+                overIndex,
+              ),
+            };
+          }
+          return prev;
+        });
       }}
     >
       <div className="flex flex-1 flex-col sm:flex-row gap-4 lg:gap-6">
@@ -98,6 +198,6 @@ export function TaskLists({ tasksByStatusList, statuses }: Props) {
           ),
         )}
       </div>
-    </DragDropProvider>
+    </DndContext>
   );
 }
