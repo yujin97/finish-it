@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Task, Status } from "@prisma-generated/client";
 import {
   DndContext,
@@ -31,6 +31,21 @@ type Props = {
   statuses: Status[];
 };
 
+const mapTasksBystatusListToSortableList = (
+  tasksByStatusList: TasksByStatus[],
+) =>
+  tasksByStatusList.reduce<Record<string, SortableTask[]>>(
+    (result, { id, tasks }) => {
+      const sortableTasks = tasks.map((task) => ({
+        ...task,
+        sortId: `$task${task.id}`,
+      }));
+      result[`taskList${id}`] = sortableTasks;
+      return result;
+    },
+    {},
+  );
+
 export function TaskLists({ tasksByStatusList, statuses }: Props) {
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: {
@@ -40,18 +55,14 @@ export function TaskLists({ tasksByStatusList, statuses }: Props) {
   });
 
   const [sortableTasksByStatusList, setSortableTasksByStatusList] = useState(
-    tasksByStatusList.reduce<Record<string, SortableTask[]>>(
-      (result, { id, tasks }) => {
-        const sortableTasks = tasks.map((task) => ({
-          ...task,
-          sortId: `$task${task.id}`,
-        }));
-        result[`taskList${id}`] = sortableTasks;
-        return result;
-      },
-      {},
-    ),
+    mapTasksBystatusListToSortableList(tasksByStatusList),
   );
+
+  useEffect(() => {
+    setSortableTasksByStatusList(
+      mapTasksBystatusListToSortableList(tasksByStatusList),
+    );
+  }, [tasksByStatusList]);
 
   function findContainer(id: string) {
     if (id in sortableTasksByStatusList) {
