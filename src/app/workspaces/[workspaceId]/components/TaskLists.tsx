@@ -10,6 +10,7 @@ import {
 import { arrayMove } from "@dnd-kit/helpers";
 
 import { TaskList } from "./TaskList";
+import { reorderTask } from "../db/reorderTask";
 
 type ClientTask = Omit<Task, "sortOrder"> & {
   sortOrder: string;
@@ -27,6 +28,7 @@ type TasksByStatus = {
 };
 
 type Props = {
+  workspaceId: number;
   tasksByStatusList: TasksByStatus[];
   statuses: Status[];
 };
@@ -38,7 +40,7 @@ const mapTasksBystatusListToSortableList = (
     (result, { id, tasks }) => {
       const sortableTasks = tasks.map((task) => ({
         ...task,
-        sortId: `$task${task.id}`,
+        sortId: `task${task.id}`,
       }));
       result[`taskList${id}`] = sortableTasks;
       return result;
@@ -46,7 +48,7 @@ const mapTasksBystatusListToSortableList = (
     {},
   );
 
-export function TaskLists({ tasksByStatusList, statuses }: Props) {
+export function TaskLists({ workspaceId, tasksByStatusList, statuses }: Props) {
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: {
       delay: 150,
@@ -191,6 +193,10 @@ export function TaskLists({ tasksByStatusList, statuses }: Props) {
           }
           return prev;
         });
+
+        const taskId = Number(id.substring(4));
+        const newPositionTaskId = Number(overId.substring(4));
+        reorderTask({ workspaceId, taskId, newPositionTaskId });
       }}
     >
       <div className="flex flex-1 flex-col sm:flex-row gap-4 lg:gap-6">

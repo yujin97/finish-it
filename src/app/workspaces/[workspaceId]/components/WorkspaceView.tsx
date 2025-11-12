@@ -74,7 +74,11 @@ export async function WorkspaceView({ userId, workspaceId, taskId }: Props) {
         {workspace.workspace.name}
       </div>
       <CreateTaskDialog workspaceId={workspaceId} />
-      <TaskLists tasksByStatusList={tasksByStatusList} statuses={statuses} />
+      <TaskLists
+        workspaceId={workspaceId}
+        tasksByStatusList={tasksByStatusList}
+        statuses={statuses}
+      />
       <TaskDetailsDialog
         task={clientSelectedTask}
         viewPath={`/workspaces/${workspaceId}`}
