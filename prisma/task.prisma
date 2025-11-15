@@ -12,7 +12,6 @@ model Task {
     updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at")
     deletedAt   DateTime? @map("deleted_at")
 
-    @@unique([workspaceId, statusId, sortOrder])
     @@map("tasks")
 }
 
