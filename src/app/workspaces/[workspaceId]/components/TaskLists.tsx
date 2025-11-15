@@ -174,6 +174,8 @@ export function TaskLists({ workspaceId, tasksByStatusList, statuses }: Props) {
           return;
         }
 
+        let moveDirection: "up" | "down" = "up";
+
         setSortableTasksByStatusList((prev) => {
           const activeIndex = prev[activeContainer].findIndex(
             ({ sortId }) => sortId === id,
@@ -181,6 +183,9 @@ export function TaskLists({ workspaceId, tasksByStatusList, statuses }: Props) {
           const overIndex = prev[overContainer].findIndex(
             ({ sortId }) => sortId === overId,
           );
+
+          moveDirection = activeIndex > overIndex ? "up" : "down";
+
           if (activeIndex !== overIndex) {
             return {
               ...prev,
@@ -194,9 +199,18 @@ export function TaskLists({ workspaceId, tasksByStatusList, statuses }: Props) {
           return prev;
         });
 
+        // TODO: extract id more safely
         const taskId = Number(id.substring(4));
-        const newPositionTaskId = Number(overId.substring(4));
-        reorderTask({ workspaceId, taskId, newPositionTaskId });
+        const newPositionTaskId =
+          id !== overId ? Number(overId.substring(4)) : null;
+        const targetStatus = Number(overContainer.substring(8));
+        reorderTask({
+          workspaceId,
+          taskId,
+          newPositionTaskId,
+          targetStatus,
+          moveDirection,
+        });
       }}
     >
       <div className="flex flex-1 flex-col sm:flex-row gap-4 lg:gap-6">
