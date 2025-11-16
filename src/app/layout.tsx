@@ -49,7 +49,9 @@ export default function RootLayout({
               <UserButton />
             </SignedIn>
           </header>
-          {children}
+          <div className="flex flex-col px-4 sm:px-6 lg:px-12 gap-6 lg:gap-8">
+            {children}
+          </div>
         </body>
       </html>
     </ClerkProvider>

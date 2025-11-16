@@ -69,7 +69,7 @@ export async function WorkspaceView({ userId, workspaceId, taskId }: Props) {
     : undefined;
 
   return (
-    <div className="flex flex-1 flex-col px-4 sm:px-6 lg:px-12 gap-6 lg:gap-8">
+    <div className="flex flex-1 flex-col gap-6 lg:gap-8">
       <div className="text-2xl font-bold text-center sm:text-left">
         {workspace.workspace.name}
       </div>
