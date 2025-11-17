@@ -1,18 +1,12 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { CreateTaskDialog } from "./components/CreateWorkspaceDialog";
-
 type Props = {
+  menubar: React.ReactNode;
   children: React.ReactNode;
 };
 
-export default function Layout({ children }: Props) {
+export default function Layout({ menubar, children }: Props) {
   return (
     <>
-      <Card>
-        <CardContent>
-          <CreateTaskDialog />
-        </CardContent>
-      </Card>
+      {menubar}
       {children}
     </>
   );
