@@ -163,7 +163,15 @@ export function TaskDetailsDialog({ task, viewPath }: Props) {
                 workspaceId={task.workspaceId}
                 taskId={task.id}
               />
-              <Button onClick={() => setIsEditMode(true)}>Edit</Button>
+              <Button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsEditMode(true);
+                }}
+              >
+                Edit
+              </Button>
             </DialogFooter>
           </>
         ) : (
