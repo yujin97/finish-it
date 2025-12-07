@@ -8,6 +8,7 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -52,6 +53,7 @@ export default function RootLayout({
           <div className="flex flex-col px-4 sm:px-6 lg:px-12 gap-6 lg:gap-8">
             {children}
           </div>
+          <Toaster position="top-right" />
         </body>
       </html>
     </ClerkProvider>
